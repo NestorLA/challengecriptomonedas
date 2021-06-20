@@ -1,12 +1,14 @@
 import Head from "next/head";
-import Image from "next/image";
-import styles from "../styles/Home.module.css";
+import { useEffect, useState } from "react";
 
 // components
 import Navigation from "../components/Navigation";
 import CardWallet from "../components/CardWallet";
 
-export default function Home() {
+
+export default function Home({ data }) {
+  const coins = data.coins.slice(0,20);
+  console.log(coins)
   return (
     <>
       <Head>
@@ -20,3 +22,11 @@ export default function Home() {
     </>
   );
 }
+
+export const getServerSideProps = async () => {
+  const apiKey = "9e0ecf94f37cfbdd";
+  const res = await fetch(`https://coinlib.io/api/v1/coinlist?key=${apiKey}&page=1&order=rank_asc`)
+  const data = await res.json()
+  // Pass data to the page via props
+  return { props: { data } };
+};

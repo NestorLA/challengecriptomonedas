@@ -1,4 +1,4 @@
-import axios from "axios";
+import Link from "next/link"
 
 import { Card, Container, Row, Col } from "react-bootstrap";
 
@@ -9,7 +9,7 @@ const CardWallet = () => {
         <Col md={4}>
           <Card style={{ width: "18rem" }} className="mt-2">
             <Card.Body>
-              <Card.Title>Wallet name</Card.Title>
+              <Card.Title><Link href="/wallet">Wallet name</Link></Card.Title>
               <Card.Text>Amount of money that i have in my wallet</Card.Text>
               <Card.Link href="#">Edit Wallet</Card.Link>
               <Card.Link href="#">Delete Wallet</Card.Link>
