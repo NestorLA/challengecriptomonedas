@@ -4,11 +4,11 @@ import { useEffect, useState } from "react";
 // components
 import Navigation from "../components/Navigation";
 import CardWallet from "../components/CardWallet";
+import CoinsShower from "../components/CoinsShower";
 
+import { Button } from "react-bootstrap";
 
 export default function Home({ data }) {
-  const coins = data.coins.slice(0,20);
-  console.log(coins)
   return (
     <>
       <Head>
@@ -18,6 +18,10 @@ export default function Home({ data }) {
       </Head>
 
       <Navigation />
+      <CoinsShower coins={data} />
+      <Button variant="primary" className="ml-5 mt-1">
+        Add Wallet
+      </Button>
       <CardWallet />
     </>
   );
@@ -25,8 +29,11 @@ export default function Home({ data }) {
 
 export const getServerSideProps = async () => {
   const apiKey = "9e0ecf94f37cfbdd";
-  const res = await fetch(`https://coinlib.io/api/v1/coinlist?key=${apiKey}&page=1&order=rank_asc`)
-  const data = await res.json()
+  const res = await fetch(
+    `https://coinlib.io/api/v1/coinlist?key=${apiKey}&page=1&order=rank_asc`
+  );
+  const response = await res.json();
+  const data = response.coins.slice(0, 20);
   // Pass data to the page via props
   return { props: { data } };
 };
