@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 
 // components
 import Navigation from "../components/Navigation";
-import CardWallet from "../components/CardWallet";
 import CoinsShower from "../components/CoinsShower";
 
 import { Button } from "react-bootstrap";
@@ -19,10 +18,6 @@ export default function Home({ data }) {
 
       <Navigation />
       <CoinsShower coins={data} />
-      <Button variant="primary" className="ml-5 mt-1">
-        Add Wallet
-      </Button>
-      <CardWallet />
     </>
   );
 }
