@@ -22,7 +22,7 @@ const CardWallet = ({
       <Row>
         {wallets.map((wallet) => (
           <Col lg={3} md={4} sm={6} xs={12} key={wallet.id}>
-            <Card className="mt-2 mr-1">
+            <Card style={{ width: "18rem" }} className="mt-2 mr-1">
               <Card.Body>
                 {wallet.id !== walletEditing ? (
                   <>

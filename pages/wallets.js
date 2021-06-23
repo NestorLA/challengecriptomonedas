@@ -11,7 +11,6 @@ const Wallet = () => {
 
   useEffect(() => {
     const json = localStorage.getItem("wallets");
-    console.log(json);
     const savedWallets = JSON.parse(json);
     if (savedWallets) {
       setWallets(savedWallets);
@@ -20,7 +19,6 @@ const Wallet = () => {
 
   useEffect(() => {
     const json = JSON.stringify(wallets);
-    console.log("JSON", json);
     localStorage.setItem("wallets", json);
   }, [wallets]);
 
