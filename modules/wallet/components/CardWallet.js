@@ -18,23 +18,23 @@ const CardWallet = ({
   submitEdits,
 }) => {
   return (
-    <Container fluid>
+    <Container>
       <Row>
         {wallets.map((wallet) => (
           <Col lg={3} md={4} sm={6} xs={12} key={wallet.id}>
-            <Card style={{ width: "18rem" }} className="mt-2 mr-1">
+            <Card className="mt-2 mr-1">
               <Card.Body>
                 {wallet.id !== walletEditing ? (
                   <>
                     <Card.Title>
-                      <Link href="/wallet">{wallet.name}</Link>
+                      <Link href={"/wallets/" + wallet.id}>{wallet.name}</Link>
                     </Card.Title>
                     <Card.Text>Criptos en esta cartera</Card.Text>
                   </>
                 ) : (
                   <Form onSubmit={(e) => submitEdits(e, wallet.id)}>
                     <Form.Control name="wallet" defaultValue={wallet.name} />
-                    <Button type="Submit"> Submit Edit</Button>
+                    <Button type="Submit">Submit</Button>
                   </Form>
                 )}
 
@@ -43,13 +43,13 @@ const CardWallet = ({
                     variant="primary"
                     onClick={() => setWalletEditing(wallet.id)}
                   >
-                    Edit Wallet
+                    Edit
                   </Button>
                   <Button
                     variant="primary"
                     onClick={() => deleteWallet(wallet.id)}
                   >
-                    Delete Wallet
+                    Delete
                   </Button>
                 </div>
               </Card.Body>

@@ -1,5 +1,4 @@
-import Navigation from "../components/Navigation";
-import CardWallet from "../modules/wallet/components/CardWallet";
+import CardWallet from "../../modules/wallet/components/CardWallet";
 
 import { useState, useEffect } from "react";
 
@@ -57,7 +56,6 @@ const Wallet = () => {
 
   return (
     <>
-      <Navigation />
       <Container>
         <Row>
           <Col>

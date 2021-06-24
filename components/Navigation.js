@@ -15,7 +15,7 @@ const Navigation = () => {
             <Link href="/">Home</Link>
           </Nav.Link>
           <Nav.Link className="font-weight-bold">
-            <Link href="/wallets">My Wallets</Link>
+            <Link href="/wallets">My wallets</Link>
           </Nav.Link>
         </Nav>
       </Navbar.Collapse>
