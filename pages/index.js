@@ -1,10 +1,7 @@
 import Head from "next/head";
-import { useEffect, useState } from "react";
 
 // components
 import CoinsShower from "../components/CoinsShower";
-
-import { Button } from "react-bootstrap";
 
 export default function Home({ data }) {
   return (
@@ -20,12 +17,11 @@ export default function Home({ data }) {
 }
 
 export const getServerSideProps = async () => {
-  const apiKey = "9e0ecf94f37cfbdd";
   const res = await fetch(
-    `https://coinlib.io/api/v1/coinlist?key=${apiKey}&page=1&order=rank_asc`
+    `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=20&page=1&sparkline=false`
   );
-  const response = await res.json();
-  const data = response.coins.slice(0, 20);
+  const data = await res.json();
+  console.log(data);
   // Pass data to the page via props
   return { props: { data } };
 };
