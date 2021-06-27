@@ -11,6 +11,8 @@ const WalletDetails = () => {
   const router = useRouter();
 
   const [formData, setFormData] = useState("");
+  const [coinPrice, setCoinPrice] = useState("");
+  const [total, setTotal] = useState(0);
 
   //formik initial values
   const [initialValues, setInitialValues] = useState({
@@ -18,13 +20,18 @@ const WalletDetails = () => {
     coin: "",
     qty: "",
     price: "",
-    date: "",
     id: "",
   });
 
   const handleSubmit = (value) => {
     console.log(value);
+    // ponerle fecha
     setFormData({ ...formData, value });
+  };
+
+  const getPrice = (value) => {
+    const FilteredCoin = coins.filter((coin) => coin.name === value);
+    setCoinPrice(FilteredCoin[0].current_price);
   };
 
   // router para home si coins esta vacio
@@ -55,6 +62,7 @@ const WalletDetails = () => {
                           onChange={props.handleChange}
                           onBlur={props.handleBlur}
                         >
+                          <option disabled>-- Elige una opción --</option>
                           <option value="compra">Compra</option>
                           <option value="venta">Venta</option>
                         </Form.Control>
@@ -66,7 +74,7 @@ const WalletDetails = () => {
                           name="coin"
                           id="coin"
                           onChange={props.handleChange}
-                          onBlur={props.handleBlur}
+                          onBlur={(e) => getPrice(e.target.value)}
                         >
                           {coins.map((coin) => (
                             <option value={coin.name} key={coin.id}>
@@ -76,12 +84,16 @@ const WalletDetails = () => {
                         </Form.Control>
                       </Form.Group>
                       <Form.Group>
-                        <Form.Label>Precio</Form.Label>
-                        <Form.Control
-                          type="text"
-                          placeholder="precio"
-                          readOnly
-                        ></Form.Control>
+                        {coinPrice.length != 0 ? (
+                          <>
+                            <Form.Label>Precio</Form.Label>
+                            <Form.Control
+                              type="text"
+                              value={coinPrice}
+                              readOnly
+                            ></Form.Control>{" "}
+                          </>
+                        ) : null}
                       </Form.Group>
                       <Form.Group>
                         <Form.Label>Cantidad</Form.Label>
@@ -89,6 +101,7 @@ const WalletDetails = () => {
                           name="qty"
                           id="qty"
                           onChange={props.handleChange}
+                          onBlur={(e) => setTotal(e.target.value * coinPrice)}
                         ></Form.Control>
                       </Form.Group>
                       <Form.Group>
@@ -96,10 +109,10 @@ const WalletDetails = () => {
                         <Form.Control
                           name="price"
                           id="price"
+                          value={total}
                           onChange={props.handleChange}
                         ></Form.Control>
                       </Form.Group>
-                      
 
                       <Button type="submit">Submit</Button>
                     </Form>
