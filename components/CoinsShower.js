@@ -28,7 +28,7 @@ const CoinsShower = ({coins}) => {
                     Last 24h:{" "}
                     {coin.price_change_percentage_24h >= 0 ? (
                       <span style={{ color: "Green" }}>
-                        {coin.price_change_percentage_24h}%
+                        +{coin.price_change_percentage_24h}%
                       </span>
                     ) : (
                       <span style={{ color: "red" }}>
