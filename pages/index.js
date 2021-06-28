@@ -22,7 +22,7 @@ export default function Home({ data }) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <h1 className="text-center h4">Crypto Price</h1>
-      <h2 className="text-center h5 text-muted">Price change in a day</h2>
+      <h2 className="text-center h5 text-muted">Price change in the last 24h</h2>
       <CoinsShower coins={data} />
     </>
   );

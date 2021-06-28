@@ -2,7 +2,7 @@ import React from "react";
 import { Container, Row, Col, Card } from "react-bootstrap";
 import Image from "next/image";
 
-const CoinsShower = ({coins}) => {
+const CoinsShower = ({ coins }) => {
   return (
     <>
       <Container fluid>
@@ -23,16 +23,16 @@ const CoinsShower = ({coins}) => {
                       height={6}
                     />
                   </div>
-                  <Card.Text>Price: ${coin.current_price.toFixed(3)}</Card.Text>
+                  <Card.Text>Price: ${coin.current_price.toFixed(2)}</Card.Text>
                   <Card.Text>
                     Last 24h:{" "}
                     {coin.price_change_percentage_24h >= 0 ? (
                       <span style={{ color: "Green" }}>
-                        +{coin.price_change_percentage_24h}%
+                        +{coin.price_change_percentage_24h.toFixed(2)}%
                       </span>
                     ) : (
                       <span style={{ color: "red" }}>
-                        {coin.price_change_percentage_24h}%
+                        {coin.price_change_percentage_24h.toFixed(2)}%
                       </span>
                     )}
                   </Card.Text>
