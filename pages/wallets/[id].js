@@ -13,6 +13,7 @@ const WalletDetails = () => {
   const [formData, setFormData] = useState("");
   const [coinPrice, setCoinPrice] = useState("");
   const [total, setTotal] = useState(0);
+  const [quantity, setQuantity] = useState(0);
 
   //formik initial values
   const [initialValues, setInitialValues] = useState({
@@ -40,6 +41,10 @@ const WalletDetails = () => {
       router.push("/");
     }
   }, []);
+
+  useEffect(() => {
+    setTotal(quantity * coinPrice);
+  }, [coinPrice, quantity]);
 
   return (
     <>
@@ -101,7 +106,7 @@ const WalletDetails = () => {
                           name="qty"
                           id="qty"
                           onChange={props.handleChange}
-                          onBlur={(e) => setTotal(e.target.value * coinPrice)}
+                          onBlur={(e) => setQuantity(e.target.value)}
                         ></Form.Control>
                       </Form.Group>
                       <Form.Group>
@@ -111,6 +116,7 @@ const WalletDetails = () => {
                           id="price"
                           value={total}
                           onChange={props.handleChange}
+                          onBlur={props.handleBlur}
                         ></Form.Control>
                       </Form.Group>
 
