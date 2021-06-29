@@ -14,6 +14,7 @@ import {
 } from "react-bootstrap";
 
 import { Formik } from "formik";
+import * as yup from "yup";
 import { DateTime } from "luxon";
 import { nanoid } from "nanoid";
 
@@ -23,8 +24,8 @@ const WalletDetails = () => {
 
   const [transactions, setTransactions] = useState([]);
   const [coinPrice, setCoinPrice] = useState("");
-  const [quantity, setQuantity] = useState(0);
   const [actualCoin, setActualCoin] = useState({});
+  const [editing, setEditing] = useState(false);
 
   //formik initial values
   const [initialValues, setInitialValues] = useState({
@@ -33,6 +34,14 @@ const WalletDetails = () => {
     qty: "",
     price: "",
     total: "",
+  });
+
+  const Schema = yup.object().shape({
+    transactionType: yup.string().required(),
+    coin: yup.string().required(),
+    qty: yup.number().required(),
+    price: yup.string().required(),
+    total: yup.number().required(),
   });
 
   const handleSubmit = (value) => {
@@ -72,7 +81,11 @@ const WalletDetails = () => {
         {" "}
         <Col xs={12} sm={10} md={6} className="text-center m-1">
           <Card className="p-2">
-            <Formik initialValues={initialValues} onSubmit={handleSubmit}>
+            <Formik
+              initialValues={initialValues}
+              onSubmit={handleSubmit}
+              validationSchema={Schema}
+            >
               {(props) => {
                 console.log(props.values);
                 return (
