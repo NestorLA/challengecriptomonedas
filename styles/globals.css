@@ -14,3 +14,10 @@ a:hover {
   color: #fff;
 }
 
+.pointer {
+  cursor: pointer;
+}
+
+.none-pointer {
+  pointer-events: none;
+}

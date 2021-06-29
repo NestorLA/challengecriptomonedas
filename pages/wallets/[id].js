@@ -1,6 +1,7 @@
 import { useAppContext } from "../../context/AppContext";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import Image from "next/image";
 
 import {
   Card,
@@ -11,8 +12,10 @@ import {
   InputGroup,
   Table,
 } from "react-bootstrap";
+
 import { Formik } from "formik";
 import { DateTime } from "luxon";
+import { nanoid } from "nanoid";
 
 const WalletDetails = () => {
   const { coins } = useAppContext();
@@ -20,20 +23,8 @@ const WalletDetails = () => {
 
   const [transactions, setTransactions] = useState([]);
   const [coinPrice, setCoinPrice] = useState("");
-  const [total, setTotal] = useState(0);
   const [quantity, setQuantity] = useState(0);
-
-  // expected transaction object
-
-  //   {
-  //       transactionType: "compra",
-  //   coin: "Bitcoin",
-  //   qty: 25,
-  //   price: 32565,
-  //   total: 232323,
-  //   date: 28/06/2021,
-  //   id: eRtdQfr,
-  // }
+  const [actualCoin, setActualCoin] = useState({});
 
   //formik initial values
   const [initialValues, setInitialValues] = useState({
@@ -45,14 +36,26 @@ const WalletDetails = () => {
   });
 
   const handleSubmit = (value) => {
-    console.log(value);
-    // ponerle fecha e id
-    setTransactions([...transactions, value]);
+    // agrega fecha e id
+    const transaction = {
+      ...value,
+      date: DateTime.now().toLocaleString(),
+      id: nanoid(6),
+    };
+    setTransactions([...transactions, transaction]);
   };
 
   const getPrice = (value) => {
-    const FilteredCoin = coins.filter((coin) => coin.name === value);
-    setCoinPrice(FilteredCoin[0].current_price.toFixed(2));
+    const FilteredCoin = coins.find((coin) => coin.name === value);
+    setCoinPrice(FilteredCoin.current_price.toFixed(2));
+    setActualCoin(FilteredCoin);
+    return FilteredCoin.current_price.toFixed(2);
+  };
+
+  const onDeleteTransaction = (id) => {
+    setTransactions(
+      transactions.filter((transaction) => transaction.id !== id)
+    );
   };
 
   // router para home si coins esta vacio
@@ -62,16 +65,12 @@ const WalletDetails = () => {
     }
   }, []);
 
-  useEffect(() => {
-    setTotal((quantity * coinPrice).toFixed(2));
-  }, [coinPrice, quantity]);
-
   return (
     <>
       <h1 className="m-1 text-center h4">Transacciones</h1>
       <Row className="justify-content-center p-1">
         {" "}
-        <Col xs={12} sm={10} md={6} className="text-center">
+        <Col xs={12} sm={10} md={6} className="text-center m-1">
           <Card className="p-2">
             <Formik initialValues={initialValues} onSubmit={handleSubmit}>
               {(props) => {
@@ -100,8 +99,13 @@ const WalletDetails = () => {
                           as="select"
                           name="coin"
                           id="coin"
-                          onChange={props.handleChange}
-                          onBlur={(e) => getPrice(e.target.value)}
+                          onChange={(e) => {
+                            props.handleChange(e);
+                            props.setFieldValue(
+                              "price",
+                              getPrice(e.target.value)
+                            );
+                          }}
                         >
                           {coins.map((coin) => (
                             <option value={coin.name} key={coin.id}>
@@ -120,8 +124,10 @@ const WalletDetails = () => {
                               </InputGroup.Prepend>
                               <Form.Control
                                 type="text"
-                                value={coinPrice}
-                                readOnly
+                                value={props.values.price}
+                                onChange={props.handleChange}
+                                className="none-pointer"
+                                name="price"
                               />{" "}
                             </InputGroup>
                           </>
@@ -132,7 +138,7 @@ const WalletDetails = () => {
                               <InputGroup.Prepend>
                                 <InputGroup.Text>USD$</InputGroup.Text>
                               </InputGroup.Prepend>
-                              <Form.Control type="text" readOnly />{" "}
+                              <Form.Control type="text" name="price" />{" "}
                             </InputGroup>
                           </>
                         )}
@@ -142,8 +148,13 @@ const WalletDetails = () => {
                         <Form.Control
                           name="qty"
                           id="qty"
-                          onChange={props.handleChange}
-                          onBlur={(e) => setQuantity(e.target.value)}
+                          onChange={(e) => {
+                            props.handleChange(e);
+                            props.setFieldValue(
+                              "total",
+                              (props.values.price * e.target.value).toFixed(2)
+                            );
+                          }}
                         ></Form.Control>
                       </Form.Group>
                       <Form.Group>
@@ -153,11 +164,9 @@ const WalletDetails = () => {
                             <InputGroup.Text>USD$</InputGroup.Text>
                           </InputGroup.Prepend>{" "}
                           <Form.Control
-                            name="price"
-                            id="price"
-                            value={total}
-                            onChange={props.handleChange}
-                            onBlur={props.handleBlur}
+                            name="total"
+                            id="total"
+                            value={props.values.total}
                           />
                         </InputGroup>
                       </Form.Group>
@@ -170,12 +179,17 @@ const WalletDetails = () => {
             </Formik>
           </Card>{" "}
         </Col>
-        <Col xs={12} sm={10} md={6}>
+        <Col xs={12} sm={10} md={6} className="m-1">
           <Card bg="primary" text="white">
-            <Card.Title className="text-center">My transactions</Card.Title>
+            <Card.Title className="text-center m-1">My transactions</Card.Title>
             <Card.Body>
               {transactions.length > 0 ? (
-                <Table bordered size="sm" variant="dark">
+                <Table
+                  bordered
+                  size="sm"
+                  variant="dark"
+                  className="text-center"
+                >
                   <thead>
                     <tr>
                       <th>Type</th>
@@ -183,6 +197,8 @@ const WalletDetails = () => {
                       <th>Price</th>
                       <th>Quantity</th>
                       <th>Total</th>
+                      <th>Edit</th>
+                      <th>Delete</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -193,11 +209,32 @@ const WalletDetails = () => {
                         <td>{transaction.price}</td>
                         <td>{transaction.qty}</td>
                         <td>{transaction.total}</td>
+                        <td className="text-center">
+                          <Image
+                            src="/edit.svg"
+                            alt="Edit icon"
+                            width={16}
+                            height={20}
+                            className="pointer ml-1"
+                          />
+                        </td>
+                        <td className="text-center">
+                          <Image
+                            src="/delete.svg"
+                            alt="Edit icon"
+                            width={16}
+                            height={20}
+                            className="pointer"
+                            onClick={() => onDeleteTransaction(transaction.id)}
+                          />
+                        </td>
                       </tr>
                     ))}
                   </tbody>
                 </Table>
-              ) : null}
+              ) : (
+                <p className="text-center">No transactions yet</p>
+              )}
             </Card.Body>
           </Card>
         </Col>
