@@ -12,7 +12,7 @@ import {
 
 const CardWallet = ({
   wallets,
-  deleteWallet,
+  onDeleteWallet,
   walletEditing,
   setWalletEditing,
   submitEdits,
@@ -20,7 +20,7 @@ const CardWallet = ({
   return (
     <Container>
       <Row>
-        {wallets.map((wallet) => (
+        {Object.values(wallets).map((wallet) => (
           <Col lg={3} md={4} sm={6} xs={12} key={wallet.id}>
             <Card className="mt-2 mr-1">
               <Card.Body>
@@ -47,7 +47,7 @@ const CardWallet = ({
                   </Button>
                   <Button
                     variant="primary"
-                    onClick={() => deleteWallet(wallet.id)}
+                    onClick={() => onDeleteWallet(wallet.id)}
                   >
                     Delete
                   </Button>

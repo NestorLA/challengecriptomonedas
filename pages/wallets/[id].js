@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Image from "next/image";
 
+import router from "next/router";
+
 import {
   Card,
   Col,
@@ -19,13 +21,16 @@ import { DateTime } from "luxon";
 import { nanoid } from "nanoid";
 
 const WalletDetails = () => {
-  const { coins } = useAppContext();
+  const { coins, transactions, setTransactions, wallets, setWallets } =
+    useAppContext();
   const router = useRouter();
 
-  const [transactions, setTransactions] = useState([]);
+  const walletId = router.query.id;
+
   const [coinPrice, setCoinPrice] = useState("");
   const [actualCoin, setActualCoin] = useState({});
   const [editing, setEditing] = useState(false);
+  const [currentTransaction, setCurrentTransaction] = useState({});
 
   //formik initial values
   const [initialValues, setInitialValues] = useState({
@@ -34,6 +39,7 @@ const WalletDetails = () => {
     qty: "",
     price: "",
     total: "",
+    id: "",
   });
 
   const Schema = yup.object().shape({
@@ -44,14 +50,31 @@ const WalletDetails = () => {
     total: yup.number().required(),
   });
 
+  //   const handleSubmit = (value) => {
+  //     // agrega fecha e id
+  //     const transaction = {
+  //       ...value,
+  //       date: DateTime.now().toLocaleString(),
+  //       id: nanoid(6),
+  //     };
+  //     setTransactions([...transactions, transaction]);
+  //   };
+
   const handleSubmit = (value) => {
-    // agrega fecha e id
-    const transaction = {
-      ...value,
-      date: DateTime.now().toLocaleString(),
-      id: nanoid(6),
-    };
-    setTransactions([...transactions, transaction]);
+    const id = walletId;
+    console.log(id)
+    const transactionId = nanoid(6);
+    const transactionDate = DateTime.now().toLocaleString();
+    setWallets({
+      ...wallets,
+      [id]: {
+        ...(wallets[id] || {}),
+        transactions: {
+          ...(wallets[id]?.transactions || {}),
+          [transactionId]: { ...value, date: transactionDate },
+        },
+      },
+    });
   };
 
   const getPrice = (value) => {
@@ -61,11 +84,36 @@ const WalletDetails = () => {
     return FilteredCoin.current_price.toFixed(2);
   };
 
-  const onDeleteTransaction = (id) => {
-    setTransactions(
-      transactions.filter((transaction) => transaction.id !== id)
-    );
-  };
+  //   const onDeleteTransaction = (id) => {
+  //     setTransactions(
+  //       transactions.filter((transaction) => transaction.id !== id)
+  //     );
+  //   };
+
+  //   const onEditTransaction = (transaction) => {
+  //     console.log(transaction);
+  //     setEditing(true);
+
+  //     setCurrentTransaction({
+  //       id: transaction.id,
+  //       transactionType: transaction.transactionType,
+  //       coin: transaction.coin,
+  //       qty: transaction.qty,
+  //       price: transaction.price,
+  //       total: transaction.total,
+  //       date: transaction.date,
+  //     });
+  //   };
+
+  //   const updateTransaction = (id, updatedTransaction) => {
+  //     setEditing(false);
+
+  //     setTransaction(
+  //       transactions.map((transaction) =>
+  //         transaction.id === id ? updatedTransaction : transaction
+  //       )
+  //     );
+  //   };
 
   // router para home si coins esta vacio
   useEffect(() => {
@@ -79,7 +127,7 @@ const WalletDetails = () => {
       <h1 className="m-1 text-center h4">Transacciones</h1>
       <Row className="justify-content-center p-1">
         {" "}
-        <Col xs={12} sm={10} md={6} className="text-center m-1">
+        <Col xs={12} sm={10} md={5} className="text-center m-1">
           <Card className="p-2">
             <Formik
               initialValues={initialValues}
@@ -87,10 +135,10 @@ const WalletDetails = () => {
               validationSchema={Schema}
             >
               {(props) => {
-                console.log(props.values);
                 return (
                   <>
                     <Form onSubmit={props.handleSubmit}>
+                      <Form.Control hidden name="id" />
                       <Form.Group>
                         <Form.Label>Tipo de transacción</Form.Label>
                         <Form.Control
@@ -229,6 +277,7 @@ const WalletDetails = () => {
                             width={16}
                             height={20}
                             className="pointer ml-1"
+                            onClick={() => onEditTransaction(transaction)}
                           />
                         </td>
                         <td className="text-center">

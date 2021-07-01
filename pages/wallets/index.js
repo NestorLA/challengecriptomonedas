@@ -4,8 +4,11 @@ import { useState, useEffect } from "react";
 
 import { Button, Container, Row, Col, Form, FormGroup } from "react-bootstrap";
 
+import { useAppContext } from "../../context/AppContext";
+import { nanoid } from "nanoid";
+
 const Wallet = () => {
-  const [wallets, setWallets] = useState([]);
+  const { wallets, setWallets } = useAppContext();
   const [walletEditing, setWalletEditing] = useState("");
 
   useEffect(() => {
@@ -24,23 +27,25 @@ const Wallet = () => {
   const addWallet = (e) => {
     e.preventDefault();
     const newWallet = {
-      id: Math.random().toString(36).substr(2, 9),
+      id: nanoid(6),
       name: e.target.wallet.value,
     };
-    setWallets([...wallets, newWallet]);
+    setWallets({
+      ...wallets,
+      [newWallet.id]: { ...newWallet, transactions: {} },
+    });
     e.target.wallet.value = "";
   };
 
-  const deleteWallet = (idToDelete) => {
-    const filteredWallets = wallets.filter(
-      (wallet) => wallet.id !== idToDelete
-    );
-    setWallets(filteredWallets);
+  const onDeleteWallet = (id) => {
+    const clone = { ...wallets };
+    delete clone[id];
+    setWallets({ ...clone });
   };
 
   const submitEdits = (event, idToEdit) => {
     event.preventDefault();
-    const updatedWallets = wallets.map((wallet) => {
+    const updatedWallets = Object.values(wallets).map((wallet) => {
       if (wallet.id === idToEdit) {
         return {
           id: wallet.id,
@@ -57,8 +62,8 @@ const Wallet = () => {
   return (
     <>
       <Container>
-        <Row>
-          <Col>
+        <Row className="justify-content-center">
+          <Col md={6} className="text-center">
             <Form onSubmit={addWallet} className="mt-1">
               <FormGroup>
                 <Form.Control
@@ -77,7 +82,7 @@ const Wallet = () => {
           <Col className="mt-2">
             <CardWallet
               wallets={wallets}
-              deleteWallet={deleteWallet}
+              onDeleteWallet={onDeleteWallet}
               walletEditing={walletEditing}
               setWalletEditing={setWalletEditing}
               submitEdits={submitEdits}
