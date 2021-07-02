@@ -7,6 +7,8 @@ export function AppWrapper({ children }) {
   const [wallets, setWallets] = useState([]);
   const [transactions, setTransactions] = useState([])
 
+  console.log(wallets)
+
   return (
     <AppContext.Provider value={{ coins, setCoins, wallets, setWallets, transactions, setTransactions }}>
       {children}

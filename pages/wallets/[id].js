@@ -27,10 +27,14 @@ const WalletDetails = () => {
 
   const walletId = router.query.id;
 
+  useEffect(() => {
+    const json = JSON.stringify(wallets);
+    localStorage.setItem("wallets", json);
+  }, [wallets]);
+
   const [coinPrice, setCoinPrice] = useState("");
   const [actualCoin, setActualCoin] = useState({});
   const [editing, setEditing] = useState(false);
-  const [currentTransaction, setCurrentTransaction] = useState({});
 
   //formik initial values
   const [initialValues, setInitialValues] = useState({
@@ -50,19 +54,8 @@ const WalletDetails = () => {
     total: yup.number().required(),
   });
 
-  //   const handleSubmit = (value) => {
-  //     // agrega fecha e id
-  //     const transaction = {
-  //       ...value,
-  //       date: DateTime.now().toLocaleString(),
-  //       id: nanoid(6),
-  //     };
-  //     setTransactions([...transactions, transaction]);
-  //   };
-
   const handleSubmit = (value) => {
     const id = walletId;
-    console.log(id)
     const transactionId = nanoid(6);
     const transactionDate = DateTime.now().toLocaleString();
     setWallets({
@@ -84,36 +77,30 @@ const WalletDetails = () => {
     return FilteredCoin.current_price.toFixed(2);
   };
 
-  //   const onDeleteTransaction = (id) => {
-  //     setTransactions(
-  //       transactions.filter((transaction) => transaction.id !== id)
-  //     );
-  //   };
+//   const onEditTransaction = (id, value) => {
+//     setWallets({
+//       ...wallets,
+//       [walletId]: {
+//         ...(wallets[walletId] || {}),
+//         transactions: {
+//           ...(wallets[walletId]?.transactions || {}),
+//           [value.id]: { ...value },
+//         },
+//       },
+//     });
+//   };
 
-  //   const onEditTransaction = (transaction) => {
-  //     console.log(transaction);
-  //     setEditing(true);
-
-  //     setCurrentTransaction({
-  //       id: transaction.id,
-  //       transactionType: transaction.transactionType,
-  //       coin: transaction.coin,
-  //       qty: transaction.qty,
-  //       price: transaction.price,
-  //       total: transaction.total,
-  //       date: transaction.date,
-  //     });
-  //   };
-
-  //   const updateTransaction = (id, updatedTransaction) => {
-  //     setEditing(false);
-
-  //     setTransaction(
-  //       transactions.map((transaction) =>
-  //         transaction.id === id ? updatedTransaction : transaction
-  //       )
-  //     );
-  //   };
+  const onDeleteTransaction = (walletId, transactionId) => {
+    const { [transactionId]: transactionToDelete, ...allTransactions } =
+      wallets[walletId].transactions;
+    setWallets({
+      ...wallets,
+      [walletId]: {
+        ...(wallets[walletId] || {}),
+        transactions: allTransactions,
+      },
+    });
+  };
 
   // router para home si coins esta vacio
   useEffect(() => {
@@ -148,7 +135,7 @@ const WalletDetails = () => {
                           onChange={props.handleChange}
                           onBlur={props.handleBlur}
                         >
-                          <option value="Compra" selected>
+                          <option value="Compra" defaultValue>
                             Compra
                           </option>
                           <option value="Venta">Venta</option>
@@ -189,6 +176,7 @@ const WalletDetails = () => {
                                 onChange={props.handleChange}
                                 className="none-pointer"
                                 name="price"
+                                readOnly
                               />{" "}
                             </InputGroup>
                           </>
@@ -199,7 +187,7 @@ const WalletDetails = () => {
                               <InputGroup.Prepend>
                                 <InputGroup.Text>USD$</InputGroup.Text>
                               </InputGroup.Prepend>
-                              <Form.Control type="text" name="price" />{" "}
+                              <Form.Control type="text" name="price" readOnly />{" "}
                             </InputGroup>
                           </>
                         )}
@@ -228,6 +216,7 @@ const WalletDetails = () => {
                             name="total"
                             id="total"
                             value={props.values.total}
+                            readOnly
                           />
                         </InputGroup>
                       </Form.Group>
@@ -244,59 +233,65 @@ const WalletDetails = () => {
           <Card bg="primary" text="white">
             <Card.Title className="text-center m-1">My transactions</Card.Title>
             <Card.Body>
-              {transactions.length > 0 ? (
-                <Table
-                  bordered
-                  size="sm"
-                  variant="dark"
-                  className="text-center"
-                >
-                  <thead>
-                    <tr>
-                      <th>Type</th>
-                      <th>Coin</th>
-                      <th>Price</th>
-                      <th>Quantity</th>
-                      <th>Total</th>
-                      <th>Edit</th>
-                      <th>Delete</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {transactions.map((transaction) => (
-                      <tr key={transaction.id}>
-                        <td>{transaction.transactionType}</td>
-                        <td>{transaction.coin}</td>
-                        <td>{transaction.price}</td>
-                        <td>{transaction.qty}</td>
-                        <td>{transaction.total}</td>
-                        <td className="text-center">
-                          <Image
-                            src="/edit.svg"
-                            alt="Edit icon"
-                            width={16}
-                            height={20}
-                            className="pointer ml-1"
-                            onClick={() => onEditTransaction(transaction)}
-                          />
-                        </td>
-                        <td className="text-center">
-                          <Image
-                            src="/delete.svg"
-                            alt="Edit icon"
-                            width={16}
-                            height={20}
-                            className="pointer"
-                            onClick={() => onDeleteTransaction(transaction.id)}
-                          />
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </Table>
-              ) : (
+              {/* {transactions > 0 ? ( */}
+              <Table bordered size="sm" variant="dark" className="text-center">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Coin</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Total</th>
+                    <th>Edit</th>
+                    <th>Delete</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {Object.entries(wallets[walletId]?.transactions || {}).map(
+                    ([transactionId, transaction]) => (
+                      <>
+                        <tr key={transactionId}>
+                          <td>{transaction.transactionType}</td>
+                          <td>{transaction.coin}</td>
+                          <td>{transaction.price}</td>
+                          <td>{transaction.qty}</td>
+                          <td>{transaction.total}</td>
+                          <td className="text-center">
+                            <Image
+                              src="/edit.svg"
+                              alt="Edit icon"
+                              width={16}
+                              height={20}
+                              className="pointer ml-1"
+                              onClick={() => {
+                                setInitialValues({
+                                  ...wallets[walletId],
+                                  id: transactionId,
+                                });
+                              }}
+                            />
+                          </td>
+                          <td className="text-center">
+                            <Image
+                              src="/delete.svg"
+                              alt="Edit icon"
+                              width={16}
+                              height={20}
+                              className="pointer"
+                              onClick={() => {
+                                onDeleteTransaction(walletId, transactionId);
+                              }}
+                            />
+                          </td>
+                        </tr>
+                      </>
+                    )
+                  )}
+                </tbody>
+              </Table>
+              {/* ) : (
                 <p className="text-center">No transactions yet</p>
-              )}
+              )} */}
             </Card.Body>
           </Card>
         </Col>
