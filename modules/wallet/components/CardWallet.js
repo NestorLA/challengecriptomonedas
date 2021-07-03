@@ -8,7 +8,7 @@ import {
   Button,
   Form,
   FormGroup,
-  Table
+  Table,
 } from "react-bootstrap";
 
 import Image from "next/image";
@@ -21,11 +21,10 @@ const CardWallet = ({
   submitEdits,
 }) => {
   return (
-    <Container>
-      <Row>
+    <Container fluid>
+      <Row className="justify-content-center">
         {Object.values(wallets).map((wallet) => (
-
-          <Col lg={4} md={6} sm={6} xs={12} key={wallet.id}>
+          <Col lg={6} md={6} sm={11} xs={11} key={wallet.id}>
             <Card className="mt-2 mr-1">
               <Card.Body>
                 {wallet.id !== walletEditing ? (
@@ -33,11 +32,14 @@ const CardWallet = ({
                     <Card.Title>
                       <Link href={"/wallets/" + wallet.id}>{wallet.name}</Link>
                     </Card.Title>
-                    {/* {console.log(Object.values(wallet.transactions))} */}
-                    <Table bordered size="sm" variant="dark" className="text-center">
+                    <Table
+                      bordered
+                      size="sm"
+                      variant="dark"
+                      className="text-center"
+                    >
                       <thead>
                         <tr>
-                          <th>Type</th>
                           <th>Coin</th>
                           <th>Price</th>
                           <th>Quantity</th>
@@ -46,24 +48,20 @@ const CardWallet = ({
                       </thead>
                       <tbody>
                         <>
-
                           {Object.values(wallet.transactions).map((trans) => (
-                            <> <tr>
-                              <td>{trans.transactionType}</td>
-                              <td>{trans.coin}</td>
-                              <td>{trans.price}</td>
-                              <td>{trans.qty}</td>
-                              <td>{trans.total}</td>  </tr>
+                            <>
+                              {" "}
+                              <tr>
+                                <td>{trans.coin}</td>
+                                <td>{parseFloat(trans.price).toFixed(1)}</td>
+                                <td>{trans.qty}</td>
+                                <td>{parseFloat(trans.total).toFixed(1)}</td>
+                              </tr>
                             </>
                           ))}
-
-
                         </>
-
-
                       </tbody>
                     </Table>
-
                   </>
                 ) : (
                   <Form onSubmit={(e) => submitEdits(e, wallet.id)}>

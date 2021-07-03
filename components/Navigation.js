@@ -6,7 +6,7 @@ const Navigation = () => {
   return (
     <Navbar bg="dark" expand="md">
       <Navbar.Brand>
-        <Link href="/" >CriptoApp</Link>
+        <Link href="/">CriptoApp</Link>
       </Navbar.Brand>
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Navbar.Collapse id="basic-navbar-nav">
