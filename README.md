@@ -1,3 +1,52 @@
+# CHALLENGE CRIPTOAPP WISELINK
+
+Hola, soy Néstor Acerbo. FrontEnd Developer!
+
+Este es el resultado del ejercicio práctico.
+
+Por falta de tiempo (y un poco de experiencia) no pude dejarlo de manera totalmente óptima. Tampoco pudo ser optimizado visualmente.
+
+App realizada con NextJs (framework de React).
+
+Utiliza la API de Coingecko.
+
+Las wallets se guardan en localStorage.
+
+Framework CSS se utilizó React Bootstrap con un template de Bootswatch (Superhero).
+
+Instrucciones para reproducir el entorno.
+
+Requisitos que no llegaron a ser desarrollados
+
+- Modificar transacciones.
+
+- Tests unitarios y de integración.
+
+## Clonar el repositorio
+
+git clone https://github.com/NestorLA/challengecriptomonedas.git
+
+## Ingresar a carpeta
+
+cd challenge criptomonedas
+
+## Instalar dependencias
+
+npm install o yarn install
+
+## Correr en local
+
+npm run dev o yarn dev
+
+Se iniciara en el puerto 3000
+
+## Visualizarlo en navegador
+
+Abrir navegador y en la barra de navegacion escribir https://localhost:3000
+
+
+* * *
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
